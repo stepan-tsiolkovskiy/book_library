@@ -1,6 +1,6 @@
 import express from 'express';
 import * as bookController from '../controllers/book.controller.js';
-import uploadMiddleware from '../../middleware/multerMiddleware.js';
+import uploadMiddleware from '../../image/middlewares/middleware.multer.js';
 
 const router = express.Router();
 
@@ -15,7 +15,12 @@ router.post(
   bookController.createBookController
 );
 
-router.put('/books/:id', express.json(), bookController.updateBookController);
+router.put(
+  '/books/:id',
+  express.json(),
+  uploadMiddleware,
+  bookController.updateBookController
+);
 
 router.delete('/books/:id', bookController.deleteBookController);
 

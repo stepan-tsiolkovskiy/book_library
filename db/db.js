@@ -1,9 +1,7 @@
 import { Sequelize } from 'sequelize';
-import pgk from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const { Client } = pgk;
 
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -12,24 +10,11 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: true,
+    },
   }
 );
-
-export const client = new Client({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
-
-client
-  .connect()
-  .then(() => {
-    console.log('Connected to the database');
-  })
-  .catch((err) => {
-    console.error('Error connecting to the database:', err);
-  });
 
 sequelize
   .authenticate()

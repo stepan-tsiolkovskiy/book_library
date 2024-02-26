@@ -5,9 +5,6 @@ import {
   updateBook,
   deleteBookById,
 } from '../services/book.service.js';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import fs from 'fs';
 
 export const getAllController = async (req, res) => {
   try {
@@ -16,25 +13,7 @@ export const getAllController = async (req, res) => {
     const searchQuery = req.query.search;
     const booksCatalogData = await getBooksAll(page, books, searchQuery);
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-
-    const imagePath = path.join(
-      __dirname,
-      '../../../',
-      'images',
-      'default.png'
-    );
-    const imageBuffer = fs.readFileSync(imagePath);
-    const base64Image = imageBuffer.toString('base64');
-
-    // Замініть image посиланням на base64-представлення зображення
-    const booksWithBase64Image = booksCatalogData.map((book) => ({
-      ...book,
-      image: `data:image/png;base64,${base64Image}`,
-    }));
-
-    res.json(booksWithBase64Image);
+    res.json(booksCatalogData);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -54,11 +33,10 @@ export const getByIdController = async (req, res) => {
 export const createBookController = async (req, res) => {
   try {
     const { name, year } = req.body;
-    let imagePath = 'images/default.png'; // Set default image path
+    let imagePath = 'images/default.png';
 
-    // Check if a file is uploaded
     if (req.file) {
-      imagePath = req.file.path; // Use the uploaded image path
+      imagePath = req.file.path;
     }
 
     if (!name || !year) {
@@ -78,9 +56,14 @@ export const updateBookController = async (req, res) => {
     const { id } = req.params;
     const { name, year } = req.body;
 
-    console.log(`id===${id}`);
+    let image = '';
+
+    if (req.file) {
+      image = req.file.path;
+    }
 
     const book = await getBookById(id);
+
     if (!book) {
       res.sendStatus(404);
       return;
@@ -91,7 +74,7 @@ export const updateBookController = async (req, res) => {
       return;
     }
 
-    const updatedBook = updateBook({ id, name, year });
+    const updatedBook = updateBook({ id, image, name, year });
     res.status(201).json(updatedBook);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,6 +1,5 @@
 import multer from 'multer';
 
-// Create Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'images');
@@ -13,11 +12,8 @@ const storage = multer.diskStorage({
   },
 });
 
-// Initialize Multer with storage configuration
 const upload = multer({ storage: storage });
 
-// Multer middleware for handling file uploads
 const uploadMiddleware = upload.single('image');
 
-// Export the Multer middleware function
 export default uploadMiddleware;

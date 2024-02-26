@@ -1,4 +1,4 @@
-import { sequelize } from '../../db/db.js';
+import { sequelize } from '../../../db/db.js';
 import { DataTypes } from 'sequelize';
 
 const Book = sequelize.define(
@@ -21,10 +21,14 @@ const Book = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
-    tableName: 'books-new',
-    timestamps: false,
+    tableName: 'books',
+    updatedAt: false,
   }
 );
 

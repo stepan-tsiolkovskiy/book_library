@@ -1,20 +1,9 @@
 import { Book } from '../models/book.model.js';
-import { Op } from 'sequelize';
-import { sequelize } from '../../db/db.js';
 
-const getBooksAll = async (page, limit = 5, searchQuery) => {
-  const offset = (page - 1) * limit;
-  const whereCondition = searchQuery
-    ? sequelize.where(sequelize.fn('LOWER', sequelize.col('name')), {
-        [Op.like]: '%' + searchQuery.toLowerCase() + '%',
-      })
-    : {};
-
+const getBooksAll = async () => {
   try {
     const result = await Book.findAll({
-      limit,
-      offset,
-      where: whereCondition,
+      order: [['createdAt']],
     });
 
     return result;
@@ -32,8 +21,8 @@ const createBook = async (image, name, year) => {
   return await Book.create({ image, name, year });
 };
 
-const updateBook = async ({ id, name, year }) => {
-  return await Book.update({ name, year }, { where: { id } });
+const updateBook = async ({ id, image, name, year }) => {
+  return await Book.update({ image, name, year }, { where: { id } });
 };
 
 const deleteBookById = async (id) => {
